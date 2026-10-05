@@ -29,7 +29,7 @@ legend(Location="best")
 
 figure; 
 plot(s, c, '-o', LineWidth=2)
-title('Spazio delle fasi')
+title('Spazio delle fasi', Interpreter='latex')
 xlabel('substrato')
 ylabel('composto')
 grid on
@@ -43,7 +43,7 @@ c_tra = c(1:div);
 plot(t_tra, c_tra, '-o', LineWidth=2)
 ylim([0, 0.5])
 grid on
-title('composto: fase transitoria')
+title('composto: fase transitoria', Interpreter='latex')
 xlabel('tempo(s)')
 
 
@@ -53,7 +53,7 @@ c_qs = c(div+1:end);
 plot(t_qs, c_qs, '-o', LineWidth=2)
 grid on
 ylim([0, 0.5])
-title('composto: fase quasi-stazionaria')
+title('composto: fase quasi-stazionaria', Interpreter='latex')
 xlabel('tempo(s)')
 legend()
 
