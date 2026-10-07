@@ -1,1 +1,1 @@
-# Esercitazioni di Biomatematica 🧬📐
+# Esercitazioni di Biomatematica
