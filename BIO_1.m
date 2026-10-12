@@ -3,7 +3,7 @@ clear; clc; close all;
 %% punto 1 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simulare il sistema di reazione enzimatica con i parametri descritti nel
-% modello del pd biomat_1.pdf
+% modello del pdf biomat_1.pdf
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % parametri del modello
 k1 = 4e6;
