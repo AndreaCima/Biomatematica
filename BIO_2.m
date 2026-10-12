@@ -85,6 +85,9 @@ for j=2:m+1
 
 end
 
-figure; 
+figure;
 imagesc(t, x, U); colorbar eastoutside
+title('Equazione del calore', Interpreter='latex')
+xlabel('Intervallo temporale')
+ylabel('intervallo spaziale')
 
