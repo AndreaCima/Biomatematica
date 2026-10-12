@@ -42,12 +42,18 @@ for j = 1:length(N)
 end
 
 figure; 
-loglog(H, err, LineWidth=2);
+loglog(H, err, LineWidth=2, DisplayName='$\|u-u_h\|_\infty$');
 hold on
 grid on
-loglog(H, 1e-2*H.^2, '--r')
+loglog(H, 1e-2*H.^2, '--r', DisplayName='$O(h^2)$')
+legend(Location="best", Interpreter="latex")
+title('Problema di Poisson con differenze finite', Interpreter='latex')
+
 
 %% punto 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Equazione del calore con differenze finite
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear; clc;
 
 u_0t = 0; u_1t = 0;
