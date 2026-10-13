@@ -216,14 +216,6 @@ ylabel('errore')
 
 title("Errore in funzione dell'ampiezza $\Delta t$", Interpreter='latex')
 
-%% punto 2 (b)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Risolvo nuovamente l'equazione del calore con nuove scelte dei dati
-% iniziali.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Condizioni di Neumann
-
 
 
 
