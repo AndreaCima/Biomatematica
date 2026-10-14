@@ -121,11 +121,6 @@ legend(Location= "best")
 title('Composto', Interpreter='latex')
 grid on
 
-% Mi sembra sensato che nell'approssimazione all'equilibrio c_approx_eq sia
-% costante dal momento che in questa approssimazione sto supponedo ds/dt=0.
-% Quindi s è costante e dunque anche c lo è, dal momento che è definito in
-% termini di s.
-
 
 %% punto 4
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
