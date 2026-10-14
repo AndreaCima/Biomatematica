@@ -92,14 +92,14 @@ for j=2:m+1
 end
 
 figure;
-imagesc(t, x, U); colorbar eastoutside
+imagesc(t, x, U); colorbar eastoutside;
 title('Equazione del calore', Interpreter='latex')
 xlabel('Intervallo temporale')
 ylabel('intervallo spaziale')
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Studio come l'errore dipende dal passo della discratizzazione Dt e h.
+% Studio come l'errore dipende dal passo della discretizzazione Dt e h.
 % In generale ho:
 % errore del primo ordine in tempo; 
 % errore del secondo ordine in spazio.
