@@ -78,11 +78,15 @@ xlabel('tempo(s)')
 % completa. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% uso l'approssimazione all'equilibrio c = e0 * s / (s+KM) e la sostituisco
-% nell'ODE iniziale, dunque rimane solo l'incognita s
+% uso l'approssimazione all'equilibrio c = e0 * s / (s+KM)
+% noto che dc/dt = -ds/dt - k2*c ---> d(c+s)/dt = -k2*c
+% siccome la quantità di enzima è molto più piccola rispetto al substrato,
+% la quantità di composto c è
+% trascurabile rispetto ad s. Quindi c+s \approx s ---> ds/dt = -k2*c, in
+% cui uso l'approssimazione di c in funzione di s
 
 KM = km1/k1;
-odefun_eq = @(t, s) km1 * (e0*s ./ (s + KM)) - k1*s*(e0 - (e0*s ./ (s + KM)));
+odefun_eq = @(t, s) -k2*e0*s./(s+KM);
 
 %%%%%%%%%%%%%%%%%%% APPROSSIMAZIONE ALL'EQUILIBRIO %%%%%%%%%%%%%%%%%%%%%%%%
 % in ode15s uso come tspan il vettore t che avevo già trovato nel calcolare
@@ -93,11 +97,12 @@ odefun_eq = @(t, s) km1 * (e0*s ./ (s + KM)) - k1*s*(e0 - (e0*s ./ (s + KM)));
 c_approx_eq = s_approx_eq ./ (s_approx_eq + KM);
 
 %%%%%%%%%%%%%%%%%%%%% APPROSSIMZIONE QUASI STAZIONARIA %%%%%%%%%%%%%%%%%%%%
-% passaggi analoghi a quelli per l'approssimazione all'equilibrio
-% In questo caso sostituisco nell'equazione iniziale c = e0 * s / (s+Km),
-% dunque rimane solo l'incognita s 
+% In questo caso sostituisco nell'equazione con ds/dt l'espressione 
+% c = e0 * s / (s+Km), dunque rimane solo l'incognita s 
 
+% sono due formulazioni equivalenti della stessa ODE
 odefun_qs =@(t, s) km1 * (e0*s ./ (s + Km)) - k1*s*(e0 - (e0*s ./ (s + Km)));
+% odefun_qs =@(t, s) -k2*e0*s./(s+Km);
 
 [t_approx_qs, s_approx_qs] = ode15s(odefun_qs, t, s0, options);
 
