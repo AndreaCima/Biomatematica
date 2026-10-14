@@ -92,7 +92,7 @@ for j=2:m+1
 end
 
 figure;
-imagesc(t, x, U); colorbar eastoutside;
+imagesc(t, x, U); colorbar eastoutside; axis xy
 title('Equazione del calore', Interpreter='latex')
 xlabel('Intervallo temporale')
 ylabel('intervallo spaziale')
