@@ -158,9 +158,9 @@ hold on
 grid on
 loglog(H, err_h(length(N))*(H./H(length(N))).^2, '--r', DisplayName='$O(h^2)$')
 legend(Location="best", Interpreter='latex')
-xlabel('h')
+xlabel('step $h$')
 ylabel('errore')
-title("Errore in funzione dell'ampiezza h", Interpreter='latex')
+title("Errore equazione del calore in funzione del passo $h$", Interpreter='latex')
 
 
 %%%%%%%%%%% Studio errore in funzione di Dt (errore in tempo) %%%%%%%%%%%%%
@@ -211,10 +211,10 @@ hold on
 grid on
 loglog(DT, err_t(length(M))*DT./DT(length(M)), '--r', DisplayName='$O(\Delta t)$')
 legend(Location="best", Interpreter="latex")
-xlabel('$\Delta t$', Interpreter='latex')
+xlabel('step $\Delta t$', Interpreter='latex')
 ylabel('errore')
 
-title("Errore in funzione dell'ampiezza $\Delta t$", Interpreter='latex')
+title("Errore equazione del calore in funzione dell'ampiezza $\Delta t$", Interpreter='latex')
 
 
 
