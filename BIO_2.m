@@ -250,15 +250,15 @@ for j=2:m+1
     U(:, j) = dA\F;
 end
 
-figure;
-imagesc(t, x, U); colorbar eastoutside; axis xy
-title('Equazione del calore', Interpreter='latex')
-xlabel('Intervallo temporale')
-ylabel('intervallo spaziale')
 
 figure; 
 
 mesh(t, x, U);
+xlabel('Intervallo temporale')
+ylabel('intervallo spaziale')
+
+title('Equazione del calore con dati di Neumann', Interpreter='latex')
+
 
 
 
