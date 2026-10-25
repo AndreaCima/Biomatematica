@@ -127,7 +127,7 @@ for j = 1:length(N)
 
     U = zeros(n+2, m+1);
 
-    t = linspace(0, T, m+1).';
+    % t = linspace(0, T, m+1).';
     x = linspace(0, 1, n+2).';
 
     U(:, 1) = u_x0(x);
@@ -158,7 +158,7 @@ hold on
 grid on
 loglog(H, err_h(length(N))*(H./H(length(N))).^2, '--r', DisplayName='$O(h^2)$')
 legend(Location="best", Interpreter='latex')
-xlabel('step $h$')
+xlabel('step $h$', Interpreter='latex')
 ylabel('errore')
 title("Errore equazione del calore in funzione del passo $h$", Interpreter='latex')
 
@@ -180,7 +180,7 @@ for j = 1:length(M)
 
     U = zeros(n+2, m+1);
 
-    t = linspace(0, T, m+1).';
+    % t = linspace(0, T, m+1).';
     x = linspace(0, 1, n+2).';
 
     U(:, 1) = u_x0(x);
@@ -240,7 +240,7 @@ A = -(1/h^2) * spdiags(repmat([1, -2, 1], n+2, 1), -1:1, n+2, n+2);
 
 A(1, 2) = -2/(h^2); A(n+2, n+1) = -2/(h^2); % valori di correzione per matrice A
 
-% matrice dei sistemi lineari che devo risolvere ad ogni tempo
+% matrice dei sistemi lineari che devo risolvere ad ogni istante temporale
 A = (1/Dt).*eye(n+2) + A; 
 dA = decomposition(A); % per risolvere il sistema lineare in modo più efficiente
 
