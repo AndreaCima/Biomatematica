@@ -1,10 +1,9 @@
-clear; clc; close all; 
-
 %% Equazione di Kolmogorov - Fisher
 % equazione di Kolmogorov-Fisher (diffusione-reazione) con condizioni di
 % Neumann omogenee
-
 %%%%%%%%%%%%%%%%%%%%%%%%%    PARAMETRI    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear; clc; close all; 
+
 sigma = 1e-3;
 b = 5;
 alpha = 0.1;
@@ -111,12 +110,24 @@ for j = 1:m+1
     title(sprintf('Tempo: t = %.2f s', t(j)), Interpreter="latex");
     xlabel('intervallo spaziale', Interpreter='latex')
     if j == 1
-        pause(2) % la prima volta ci va un po' di tempo perchè apra il plot
+        pause(5) % la prima volta ci va un po' di tempo perchè apra il plot
     end
     pause(0.005)
 end
 
-make_video(U, [0 2])
+
+figure; 
+mesh(t, x, U); 
+xlabel('Intervallo temporale', Interpreter='latex')
+ylabel('Intervallo spaziale', Interpreter='latex')
+colorbar
+
+figure; 
+imagesc(x, t, U); axis xy
+xlabel('Intervallo spaziale', Interpreter='latex')
+ylabel('Intervallo temporale', Interpreter='latex')
+colorbar
+% make_video(U, [0 2])
 
 
 
