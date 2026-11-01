@@ -48,7 +48,7 @@ mesh(t, x, U);
 xlabel('Intervallo temporale', Interpreter='latex')
 ylabel('Intervallo spaziale', Interpreter='latex')
 
-title('Kolmogorov - Fisher', Interpreter='latex')
+title(sprintf('Equazione di Kolmogorov - Fisher con $u(x, 0) = %.2f$', alpha), Interpreter='latex')
 
 
 % per alpha = 1 e per alpha = 0 (e I_app=0) ho soluzioni stazionaria dal
@@ -64,7 +64,7 @@ clear; clc;
 % condizioni di Neumann omogenee.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 u_x0 = 0;
-alpha = 10;
+alpha = 0.1;
 sigma = 1e-3;
 b = 5;
 
@@ -74,13 +74,12 @@ T = 10;
 m = 200; % tempo
 n = 100; % spazio 
 
-
 t = linspace(0, T, m+1).';
 x = linspace(0, 1, n+2).';
 
 U = zeros(n+2, m+1);
 
-U(:, 1) = u_x0; % condizione iniziale in spazio
+U(:, 1) = u_x0 + I_app(0, x); % condizione iniziale in spazio
 
 Dt = T/m;
 h = 1/(n+1);
@@ -105,10 +104,156 @@ figure;
 
 for j = 1:m+1
     plot(x, U(:, j))
+    ylim([min(U(:)) max(U(:))])
     grid on
-    ylim([0 2])
-    title(sprintf('Tempo: t = %.2f s', t(j)), Interpreter="latex");
-    xlabel('intervallo spaziale', Interpreter='latex')
+    title(sprintf('Kolmogorov - Fisher: t = %.2f s', t(j)), Interpreter="latex");
+    xlabel('Intervallo spaziale', Interpreter='latex')
+    if j == 1
+        pause(5) % la prima volta ci va un po' di tempo perchè apra il plot
+    end
+    pause(0.005)
+end
+
+figure; 
+mesh(t, x, U); 
+xlabel('Intervallo temporale', Interpreter='latex')
+ylabel('Intervallo spaziale', Interpreter='latex')
+colorbar
+title('Kolmogorov-Fisher con corrente applicata', Interpreter='latex')
+
+figure; 
+imagesc(x, t, U); axis xy
+xlabel('Intervallo spaziale', Interpreter='latex')
+ylabel('Intervallo temporale', Interpreter='latex')
+colorbar
+title('Kolmogorov-Fisher con corrente applicata', Interpreter='latex')
+% make_video(U, [min(U(:)) max(U(:))])
+
+% plot in tempo della soluzione nel punto x=0.5
+idx_mid = ceil(length(x))/2;
+plot(t, U(idx_mid, :), LineWidth=2)
+xlabel('tempo', Interpreter='latex')
+title('Kolmogorov-Fisher con corrente applicata')
+subtitle(sprintf('Evoluzione temporale in x = %.2f ', x(idx_mid)), Interpreter="latex")
+grid on
+
+
+%% Equazione di Nagumo con dati di Neumann omogenei
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear; clc; 
+
+% parametri dell'equazione 
+sigma = 1e-3;
+b = 5;
+beta = 0.1; 
+delta = 1;
+alpha = 0.11; 
+
+I_app = 0; % non ho corrente applicata 
+
+T = 10;
+m = 2^10; % tempo
+n = 2^10; % spazio 
+
+u_x0 = @(x) alpha; % condizione inziale
+
+t = linspace(0, T, m+1).';
+x = linspace(0, 1, n+2).';
+
+U = zeros(n+2, m+1);
+
+U(:, 1) = u_x0(x); % inserisco la condizione iniziale in spazio
+
+% passi della discretizzazione 
+Dt = T/m;
+h = 1/(n+1);
+
+A = -(1/h^2) * spdiags(repmat([1, -2, 1], n+2, 1), -1:1, n+2, n+2);
+
+A(1, 2) = -2/(h^2); A(n+2, n+1) = -2/(h^2); % valori di correzione per matrice A
+
+% matrice dei sistemi lineari che devo risolvere ad ogni istante temporale
+A = (1/Dt).*speye(n+2) + sigma*A; 
+dA = decomposition(A); % per risolvere il sistema lineare in modo più efficiente
+
+for j=2:m+1
+    F = U(:, j-1)/Dt + b * U(:, j-1) .* ( U(:, j-1) - beta ) .* ( delta - U(:, j-1) ) + I_app;
+
+    U(:, j) = dA\F;
+end
+
+% mi aspetto che per alpha = 0, beta, delta si abbiano delle soluzioni
+% stazionarie poiché la parte di reazione dellla F si annulla e come prima
+% si ha che il vettore di 1 è nel ker della matrice A (la somma lungo le
+% righe è nulla). 
+
+figure; 
+
+mesh(t, x, U);
+xlabel('Intervallo temporale', Interpreter='latex')
+ylabel('Intervallo spaziale', Interpreter='latex')
+
+title(sprintf('Equazione di Nagumo con $u(x, 0)$ = %.2f', alpha), Interpreter='latex')
+
+
+%%
+clear; clc;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% altra configurazione dell'equazione di Nagumo, sempre con
+% condizioni di Neumann omogenee.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% parametri dell'equazione 
+sigma = 1e-3;
+b = 5;
+beta = 0.1; 
+delta = 1;
+alpha = 0.5;
+
+% in questo caso ho dato iniziale nullo, ma ho una corrente applicata 
+u_x0 = @(x) 0;
+I_app = @(t, x) alpha*(0 <= x & x <= 0.04 & 0 <= t & t <= 1);
+
+% uso un intervallo temporale più ampio per studiare meglio l'evoluzione
+T = 30;  
+m = 600; % tempo
+n = 100; % spazio 
+
+t = linspace(0, T, m+1).';
+x = linspace(0, 1, n+2).';
+
+U = zeros(n+2, m+1);
+
+U(:, 1) = u_x0(x) + I_app(0, x); % condizione iniziale in spazio
+
+Dt = T/m;
+h = 1/(n+1);
+
+A = -(1/h^2) * spdiags(repmat([1, -2, 1], n+2, 1), -1:1, n+2, n+2);
+
+A(1, 2) = -2/(h^2); A(n+2, n+1) = -2/(h^2); % valori di correzione per matrice A
+
+% matrice dei sistemi lineari che devo risolvere ad ogni istante temporale
+A = (1/Dt).*speye(n+2) + sigma*A; 
+dA = decomposition(A); % per risolvere il sistema lineare in modo più efficiente
+
+for j=2:m+1
+    F = U(:, j-1)/Dt + b * U(:, j-1) .* ( U(:, j-1) - beta ) .* ( delta - U(:, j-1) ) + I_app(t(j), x);
+
+    U(:, j) = dA\F;
+end
+
+
+% animazione in tempo della soluzione sull'intervallo [0, 1]
+figure; 
+
+for j = 1:m+1
+    
+    plot(x, U(:, j))
+    ylim([min(U(:)) max(U(:))])
+    grid on
+    
+    title(sprintf('Nagumo: t = %.2f s', t(j)), Interpreter="latex");
+    xlabel('Intervallo spaziale', Interpreter='latex')
     if j == 1
         pause(5) % la prima volta ci va un po' di tempo perchè apra il plot
     end
@@ -121,13 +266,28 @@ mesh(t, x, U);
 xlabel('Intervallo temporale', Interpreter='latex')
 ylabel('Intervallo spaziale', Interpreter='latex')
 colorbar
+title('Equazione di Nagumo con corrente applicata', Interpreter='latex')
 
 figure; 
 imagesc(x, t, U); axis xy
 xlabel('Intervallo spaziale', Interpreter='latex')
 ylabel('Intervallo temporale', Interpreter='latex')
 colorbar
-% make_video(U, [0 2])
+title('Equazione di Nagumo con corrente applicata', Interpreter='latex')
+% make_video(U, [min(U(:)) max(U(:))])
+
+% plot in tempo della soluzione nel punto x=0.5
+idx_mid = ceil(length(x))/2;
+plot(t, U(idx_mid, :), LineWidth=2)
+xlabel('tempo', Interpreter='latex')
+title('Nagumo con corrente applicata')
+subtitle(sprintf('Evoluzione temporale in x = %.2f ', x(idx_mid)), Interpreter="latex")
+grid on
+
+
+
+
+
 
 
 
