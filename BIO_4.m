@@ -33,12 +33,14 @@ h2 = animatedline('LineWidth', 1.5, Color='red');
 axis([0, T, min(ye(:)), max(ye(:))])
 grid on
 title('Evoluzione temporale', Interpreter='latex')
+xlabel('tempo (s)', Interpreter='latex')
 
 nexttile
 h3 = animatedline('LineWidth', 1.5);
 axis([min(ye(:)), max(ye(:)), min(ye(:)), max(ye(:))])
 grid on
 title('Spazio delle fasi', Interpreter='latex')
+xlabel('v'); ylabel('w')
 
 for k = 1:length(t)
     addpoints(h1, t(k), v(k))
