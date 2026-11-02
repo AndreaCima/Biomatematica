@@ -101,17 +101,15 @@ end
 
 % animazione in tempo della soluzione sull'intervallo [0, 1]
 figure; 
-
+hp = plot(x, U(:, 1), LineWidth=2);
+ylim([min(U(:)) max(U(:))])
+xlabel('x'); ylabel('u')
 for j = 1:m+1
-    plot(x, U(:, j))
-    ylim([min(U(:)) max(U(:))])
+    set(hp, 'YData', U(:, j))
     grid on
     title(sprintf('Kolmogorov - Fisher: t = %.2f s', t(j)), Interpreter="latex");
     xlabel('Intervallo spaziale', Interpreter='latex')
-    if j == 1
-        pause(5) % la prima volta ci va un po' di tempo perchè apra il plot
-    end
-    pause(0.005)
+    drawnow
 end
 
 figure; 
@@ -246,18 +244,15 @@ end
 % animazione in tempo della soluzione sull'intervallo [0, 1]
 figure; 
 
+hp = plot(x, U(:, 1), LineWidth=2);
+ylim([min(U(:)) max(U(:))])
+xlabel('x'); ylabel('u')
 for j = 1:m+1
-    
-    plot(x, U(:, j))
-    ylim([min(U(:)) max(U(:))])
+    set(hp, 'YData', U(:, j))
     grid on
-    
     title(sprintf('Nagumo: t = %.2f s', t(j)), Interpreter="latex");
     xlabel('Intervallo spaziale', Interpreter='latex')
-    if j == 1
-        pause(5) % la prima volta ci va un po' di tempo perchè apra il plot
-    end
-    pause(0.005)
+    drawnow
 end
 
 
