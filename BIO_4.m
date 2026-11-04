@@ -1,5 +1,6 @@
 clear; clc; close all; 
  
+% parametri
 b = 5; 
 c = 1; 
 beta = 0.1;
@@ -8,11 +9,12 @@ gamma = 0.25;
 e = 0.1;
 
 T = 100;
-I_app = 0.0;
+I_app = 0.5;
 
-% v0 = 0; w0 = 0;
+% diverse scelte di condizioni inziali
+v0 = 0; w0 = 0;
 % v0 = 0.1; w0 = 0;
-v0 = 0.6; w0 = 0;
+% v0 = 0.6; w0 = 0;
 
 y0 = [v0; w0];
 tspan = [0 T];
@@ -38,19 +40,21 @@ legend('potenziale', 'recovery', Location='best')
 subplot(1, 2, 2)
 h3 = animatedline('LineWidth', 1.5);
 hold on
-g = @(x) x./gamma;
-f = @(x) (b/c)*x.*( x-beta ) .* ( delta-x ) + I_app;
-% plot nullclines
-fplot(f, [min(ye(:)), max(ye(:))])
-fplot(g, [min(ye(:)), max(ye(:))])
 
-F =@(x, y) b*x.*( x-beta ) .* ( delta-x ) -c*y+I_app;
-G=@(x, y) e*(x-gamma*y);
+% plot nullclines
+g_null = @(x) x./gamma;
+f_null = @(x) (b*x.*( x-beta ) .* ( delta-x ) + I_app)/c;
+
+fplot(f_null, [min(ye(:)), max(ye(:))])
+fplot(g_null, [min(ye(:)), max(ye(:))])
+
+F = @(x, y) b*x.*( x-beta ) .* ( delta-x ) -c*y + I_app;
+G = @(x, y) e*(x-gamma*y);
 
 [X, Y] = meshgrid(linspace(min(ye(:)), max(ye(:)), 30));
 U = F(X, Y);
 V = G(X, Y);
-quiver(X, Y, U, V, Color='blue')
+quiver(X, Y, U, V, Color='blue') % plot campo vettoriale
 
 axis([min(ye(:)), max(ye(:)), min(ye(:)), max(ye(:))])
 grid on
@@ -68,7 +72,7 @@ drawnow % per essere sicuro che l'animazione arrivi fino alla fine
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% considero un impulso di corrente applicata nell'intervallo [0, T_stim]
+%% considero un impulso di corrente applicata nell'intervallo [0, T_stim]
 
 b = 5; 
 c = 1; 
@@ -76,7 +80,7 @@ beta = 0.1;
 delta = 1;
 gamma = 0.25;
 e = 0.1;
-alpha = 1; 
+alpha = 0.5; 
 
 T = 100;
 T_stim = 1;
@@ -111,7 +115,24 @@ legend('potenziale', 'recovery', Location='best')
 
 subplot(1, 2, 2)
 h3 = animatedline('LineWidth', 1.5);
+hold on
 
+% plot nullclines
+g_null = @(x) x./gamma;
+f_null = @(x) (b*x.*( x-beta ) .* ( delta-x ) + alpha)/c;
+fplot(f_null, [min(ye(:)), max(ye(:))])
+fplot(g_null, [min(ye(:)), max(ye(:))])
+
+% guardo il campo vettoriale F quando non ho più impulso, dal momento che
+% questo campo vettoriale descrive il sistema per la maggior parte della
+% simulazione
+F = @(x, y) b*x.*( x-beta ) .* ( delta-x ) - c*y;
+G = @(x, y) e*(x-gamma*y);
+
+[X, Y] = meshgrid(linspace(min(ye(:)), max(ye(:)), 30));
+U = F(X, Y);
+V = G(X, Y);
+quiver(X, Y, U, V, Color='blue') % plot campo vettoriale
 
 axis([min(ye(:)), max(ye(:)), min(ye(:)), max(ye(:))])
 grid on
