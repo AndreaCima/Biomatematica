@@ -22,16 +22,19 @@ tspan = [0 T];
 f = @(t, y) [b*y(1).*(y(1)-beta).*(delta-y(1)) - c*y(2) + I_app; ...
     e*(y(1)-gamma*y(2))];
 
-[t, ye] = ode15s(f, tspan, y0);
+[t, ya] = ode15s(f, tspan, y0);
 
-v = ye(:, 1);
-w = ye(:, 2);
+v = ya(:, 1);
+w = ya(:, 2);
+
+min_ya = min(ya(:)) - 0.05; 
+max_ya = max(ya(:)) + 0.05;
 
 subplot(1, 2, 1)
 h1 = animatedline('LineWidth', 1.5, Color='blue');
 h2 = animatedline('LineWidth', 1.5, Color='red');
 
-axis([0, T, min(ye(:)), max(ye(:))])
+axis([0, T, min_ya, max_ya])
 grid on
 title('Evoluzione temporale', Interpreter='latex')
 xlabel('tempo (s)', Interpreter='latex')
@@ -45,18 +48,18 @@ hold on
 g_null = @(x) x./gamma;
 f_null = @(x) (b*x.*( x-beta ) .* ( delta-x ) + I_app)/c;
 
-fplot(f_null, [min(ye(:)), max(ye(:))])
-fplot(g_null, [min(ye(:)), max(ye(:))])
+fplot(f_null, [min_ya, max_ya])
+fplot(g_null, [min_ya, max_ya])
 
 F = @(x, y) b*x.*( x-beta ) .* ( delta-x ) -c*y + I_app;
 G = @(x, y) e*(x-gamma*y);
 
-[X, Y] = meshgrid(linspace(min(ye(:)), max(ye(:)), 30));
+[X, Y] = meshgrid(linspace(min_ya, max_ya, 30));
 U = F(X, Y);
 V = G(X, Y);
 quiver(X, Y, U, V, Color='blue') % plot campo vettoriale
 
-axis([min(ye(:)), max(ye(:)), min(ye(:)), max(ye(:))])
+axis([min_ya, max_ya, min_ya, max_ya])
 grid on
 title('Spazio delle fasi', Interpreter='latex')
 xlabel('v'); ylabel('w')
@@ -96,10 +99,13 @@ tspan = [0 T];
 f = @(t, y) [b*y(1).*(y(1)-beta).*(delta-y(1)) - c*y(2) + I_app(t); ...
     e*(y(1)-gamma*y(2))];
 
-[t, ye] = ode15s(f, tspan, y0);
+[t, ya] = ode15s(f, tspan, y0);
 
-v = ye(:, 1);
-w = ye(:, 2);
+min_ya = min(ya(:)) - 0.05;
+max_ya = max(ya(:)) + 0.05;
+
+v = ya(:, 1);
+w = ya(:, 2);
 
 figure; 
 
@@ -107,7 +113,7 @@ subplot(1, 2, 1)
 h1 = animatedline('LineWidth', 1.5, Color='blue');
 h2 = animatedline('LineWidth', 1.5, Color='red');
 
-axis([0, T, min(ye(:)), max(ye(:))])
+axis([0, T, min_ya, max_ya])
 grid on
 title('Evoluzione temporale', Interpreter='latex')
 xlabel('tempo (s)', Interpreter='latex')
@@ -119,9 +125,9 @@ hold on
 
 % plot nullclines
 g_null = @(x) x./gamma;
-f_null = @(x) (b*x.*( x-beta ) .* ( delta-x ) + alpha)/c;
-fplot(f_null, [min(ye(:)), max(ye(:))])
-fplot(g_null, [min(ye(:)), max(ye(:))])
+f_null = @(x) (b*x.*( x-beta ) .* ( delta-x ))/c;
+fplot(f_null, [min_ya, max_ya])
+fplot(g_null, [min_ya, max_ya])
 
 % guardo il campo vettoriale F quando non ho più impulso, dal momento che
 % questo campo vettoriale descrive il sistema per la maggior parte della
@@ -129,12 +135,12 @@ fplot(g_null, [min(ye(:)), max(ye(:))])
 F = @(x, y) b*x.*( x-beta ) .* ( delta-x ) - c*y;
 G = @(x, y) e*(x-gamma*y);
 
-[X, Y] = meshgrid(linspace(min(ye(:)), max(ye(:)), 30));
+[X, Y] = meshgrid(linspace(min_ya, max_ya, 30));
 U = F(X, Y);
 V = G(X, Y);
 quiver(X, Y, U, V, Color='blue') % plot campo vettoriale
 
-axis([min(ye(:)), max(ye(:)), min(ye(:)), max(ye(:))])
+axis([min_ya, max_ya, min_ya, max_ya])
 grid on
 title('Spazio delle fasi', Interpreter='latex')
 xlabel('v'); ylabel('w')
