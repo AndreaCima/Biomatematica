@@ -112,9 +112,9 @@ hold on
 plot(V, h_inf, LineWidth=2, DisplayName='$h_\infty$')
 plot(V, n_inf, LineWidth=2, DisplayName='$n_\infty$')
 legend(Location="best", Interpreter="latex")
-title('Valori qusi stazionari', Interpreter='latex')
+title('Valori qusi stazionari delle variabili di gating', Interpreter='latex')
 
-%%
+%% Test con impulso di corrente
 
 Cm = 1; 
 GNa = 120;
@@ -161,7 +161,7 @@ for alpha = alpha_test
     
     figure;
     tiledlayout(2, 2)
-    title(tiledlayout(2, 2), sprintf('alpha = %i', alpha))
+    title(tiledlayout(2, 2), sprintf('Modello Hodgkin-Huxley: impulso %.1f per %.1f ms', alpha, T_stim))
     nexttile
     plot(t, V, LineWidth=2)
     grid on
