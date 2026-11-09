@@ -16,8 +16,8 @@ beta_m = @(V) 4*exp(-V/18);
 beta_h = @(V) (exp( (30-V)/10 ) + 1).^(-1);
 beta_n = @(V) 0.125*exp(-V/80);
 
-V0 = 12;
-m0 = 5.02934e-2;
+V0 = 6.6;
+m0 = 5.2934e-2;
 h0 = 5.9611e-1;
 n0 = 3.1768e-1;
 Iapp = 0;
@@ -85,5 +85,33 @@ plot(t, IL, LineWidth=2, DisplayName='IL')
 plot(t, Iion, LineWidth=2, DisplayName='Iion')
 legend(Location="best")
 
+
+
+figure;
+tau_m = 1./(alpha_m(V) + beta_m(V));
+tau_h = 1./(alpha_h(V) + beta_h(V));
+tau_n = 1./(alpha_n(V) + beta_n(V));
+
+plot(V, tau_m, LineWidth=2, DisplayName='$\tau_m$')
+grid on 
+hold on
+plot(V, tau_h, LineWidth=2, DisplayName='$\tau_h$')
+plot(V, tau_n, LineWidth=2, DisplayName='$\tau_n$')
+legend(Location="best", Interpreter="latex")
+title('Costanti di tempo', Interpreter='latex')
+
+figure;
+
+m_inf = alpha_m(V)./(alpha_m(V) + beta_m(V));
+h_inf = alpha_h(V)./(alpha_h(V) + beta_h(V));
+n_inf = alpha_n(V)./(alpha_n(V) + beta_n(V));
+
+plot(V, m_inf, LineWidth=2, DisplayName='$m_\infty$')
+grid on
+hold on
+plot(V, h_inf, LineWidth=2, DisplayName='$h_\infty$')
+plot(V, n_inf, LineWidth=2, DisplayName='$n_\infty$')
+legend(Location="best", Interpreter="latex")
+title('Valori qusi stazionari', Interpreter='latex')
 
 
