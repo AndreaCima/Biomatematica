@@ -108,8 +108,9 @@ v = ya(:, 1);
 w = ya(:, 2);
 
 figure; 
+tiledlayout(1, 2)
 
-subplot(1, 2, 1)
+nexttile
 h1 = animatedline('LineWidth', 1.5, Color='blue');
 h2 = animatedline('LineWidth', 1.5, Color='red');
 
@@ -119,7 +120,7 @@ title('Evoluzione temporale', Interpreter='latex')
 xlabel('tempo (s)', Interpreter='latex')
 legend('potenziale', 'recovery', Location='best')
 
-subplot(1, 2, 2)
+nexttile
 h3 = animatedline('LineWidth', 1.5);
 hold on
 
