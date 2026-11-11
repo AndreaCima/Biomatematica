@@ -41,7 +41,7 @@ h = ya(:, 3);
 n = ya(:, 4);
 
 
-tiledlayout(2, 2)
+tiledlayout(4, 1)
 nexttile
 plot(t, V, LineWidth=2)
 grid on
@@ -98,7 +98,7 @@ grid on
 hold on
 plot(V, tau_h, LineWidth=2, DisplayName='$\tau_h$')
 plot(V, tau_n, LineWidth=2, DisplayName='$\tau_n$')
-legend(Location="best", Interpreter="latex")
+legend(Location="best", Interpreter="latex", FontSize=20)
 title('Costanti di tempo', Interpreter='latex')
 
 figure;
@@ -112,7 +112,7 @@ grid on
 hold on
 plot(V, h_inf, LineWidth=2, DisplayName='$h_\infty$')
 plot(V, n_inf, LineWidth=2, DisplayName='$n_\infty$')
-legend(Location="best", Interpreter="latex")
+legend(Location="best", Interpreter="latex", FontSize=20)
 title('Valori qusi stazionari delle variabili di gating', Interpreter='latex')
 
 %% Test con impulso di corrente
@@ -161,8 +161,8 @@ for alpha = alpha_test
     n = ya(:, 4);
     
     figure;
-    tiledlayout(2, 2)
-    title(tiledlayout(2, 2), sprintf('Modello Hodgkin-Huxley: impulso %.1f per %.1f ms', alpha, T_stim))
+    tiledlayout(4, 1)
+    title(tiledlayout(4, 1), sprintf('Modello Hodgkin-Huxley: impulso %.1f per %.1f ms', alpha, T_stim))
     nexttile
     plot(t, V, LineWidth=2)
     grid on
@@ -233,8 +233,6 @@ n0 = 3.1768e-1;
 T = 100;
 T_DI_test = [20 17 15 12 10 8 7 6 5 4 3 2 1.5];
 
-tspan = [0, T];
-
 y0 = [V0 m0 h0 n0]';
 
 for T_DI = T_DI_test
@@ -244,7 +242,7 @@ for T_DI = T_DI_test
     t_tot = [];
    
     for i = 1:k
-        tspan = [(i-1)*T_DI, i*T_DI];
+        tspan = [(i-1)*T_DI, min(i*T_DI, T)];
         I_app = @(t) 100*(( t <= (i-1)*T_DI + 0.1 ) && ( t >= (i-1)*T_DI ));
   
         f = @(t, y) [(1/Cm) * (-(GNa*( y(2).^3 ) .* y(3) .* (y(1)-VNa) + GK*( y(4).^4 ).*( y(1)-VK ) + GL*( y(1)-VL ) ) + I_app(t)); ...
