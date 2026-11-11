@@ -154,3 +154,75 @@ for k = 1:length(t)
     pause(0.1)
 end
 drawnow % per essere sicuro che l'animazione arrivi fino alla fine
+
+
+%% analisi potenziale d'azione in funzione di durata e ampiezza dello stimolo
+clear; clc; 
+
+b = 5; 
+c = 1; 
+beta = 0.1;
+delta = 1;
+gamma = 0.25;
+e = 0.1;
+alpha = 0.5; 
+
+T = 10; % mi interessa solo sapere se parte o meno il potenziale d'azione 
+v0 = 0; w0 = 0;
+y0 = [v0; w0];
+tspan = [0 T];
+
+% se il potenziale d'azione parte, allora arriva circa fino allo spike delta
+% che è uno zero del termine noto del modello FHN
+treshold = delta/2; 
+
+T_stim_test = linspace(0.1, 1.5, 1000);
+alpha_test = linspace(0.1, 1.5, 100);
+
+pot = zeros(length(T_stim_test), 1);
+
+for idx = 1:length(T_stim_test)
+    idx_alpha = 1;
+
+    T_stim = T_stim_test(idx);
+
+    I_app = @(t) alpha_test(idx_alpha) * (t <= T_stim); % provo con il primo valore di alpha 
+
+    f = @(t, y) [b*y(1).*(y(1)-beta).*(delta-y(1)) - c*y(2) + I_app(t); ...
+        e*(y(1)-gamma*y(2))];
+
+    [t, ya] = ode15s(f, tspan, y0);
+    V = ya(:, 1);
+
+    while max(V) < treshold && idx_alpha < length(alpha_test)
+
+        I_app = @(t) alpha_test(idx_alpha+1) * (t <= T_stim); % provo con il primo valore di alpha 
+
+        f = @(t, y) [b*y(1).*(y(1)-beta).*(delta-y(1)) - c*y(2) + I_app(t); ...
+            e*(y(1)-gamma*y(2))];
+
+        [t, ya] = ode15s(f, tspan, y0);
+        V = ya(:, 1);
+
+        idx_alpha = idx_alpha + 1; 
+    end
+    pot(idx) = alpha_test(idx_alpha);
+
+end
+
+figure; 
+scatter(T_stim_test, pot, Marker='o', MarkerEdgeColor='k', MarkerFaceColor='k', DisplayName="Potenziale d'azione")
+grid on
+hold on
+xlabel('Durata stimolo')
+ylabel('Ampiezza stimolo')
+
+% approssimo la costante di proporzionalità inversa, supponendo che i dati
+% siano distribuiti lungo un'iperbole 
+C = mean(T_stim_test(:) .* pot(:));
+
+f = @(x) C./x;
+
+fplot(f, [min(T_stim_test) max(T_stim_test)], 'r', LineWidth=2, DisplayName=sprintf('Tstim * Iapp = %.2f', C))
+
+legend(Location="best", Interpreter="latex", FontSize=20)
