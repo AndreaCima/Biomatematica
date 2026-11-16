@@ -233,28 +233,30 @@ n0 = 3.1768e-1;
 T = 100;
 T_DI_test = [20 17 15 12 10 8 7 6 5 4 3 2 1.5];
 
-y0 = [V0 m0 h0 n0]';
-
 for T_DI = T_DI_test
+    y0 = [V0 m0 h0 n0]';
 
     k = ceil(T/T_DI);
     V_tot = [];
+   
     t_tot = [];
    
     for i = 1:k
         tspan = [(i-1)*T_DI, min(i*T_DI, T)];
-        I_app = @(t) 100*(( t <= (i-1)*T_DI + 0.1 ) && ( t >= (i-1)*T_DI ));
+        I_app = @(t) 100*(( t <= (i-1)*T_DI + 0.1 ));
   
         f = @(t, y) [(1/Cm) * (-(GNa*( y(2).^3 ) .* y(3) .* (y(1)-VNa) + GK*( y(4).^4 ).*( y(1)-VK ) + GL*( y(1)-VL ) ) + I_app(t)); ...
         alpha_m(y(1)).*(1-y(2)) - beta_m(y(1)).*y(2); ...
         alpha_h(y(1)).*(1-y(3)) - beta_h(y(1)).*y(3); ...
         alpha_n(y(1)).*(1-y(4)) - beta_n(y(1)).*y(4)];
-        
+        if i > 1
+            y0 = ya(end, :)';
+        end
         [t, ya] = ode15s(f, tspan, y0);
         
         V = ya(:, 1);
-        V_tot = [V_tot; V(2:end)];
-        t_tot = [t_tot; t(2:end)];
+        V_tot = [V_tot; V(1:end-1)];
+        t_tot = [t_tot; t(1:end-1)];
 
     end
     
@@ -266,3 +268,57 @@ for T_DI = T_DI_test
 
 end
 
+
+%%
+clear;
+
+I_app_test = [5 6 7 10 20 40 100 200];
+
+
+Cm = 1; 
+GNa = 120;
+GK = 36;
+GL = 0.3;
+VNa = 115;
+VK = -12;
+VL = 10.6;
+
+alpha_m = @(V) 0.1*(25-V).*(exp((25-V)/10)-1).^(-1);
+alpha_h = @(V) 0.07*exp(-V/20);
+alpha_n = @(V) 0.01*(10-V) .* (exp( (10-V)/10 ) -1 ).^(-1);
+
+beta_m = @(V) 4*exp(-V/18);
+beta_h = @(V) (exp( (30-V)/10 ) + 1).^(-1);
+beta_n = @(V) 0.125*exp(-V/80);
+
+V0 = 2.7570e-4;
+m0 = 5.2934e-2;
+h0 = 5.9611e-1;
+n0 = 3.1768e-1;
+
+y0 = [V0 m0 h0 n0]';
+T = 100;
+tspan = [0 T];
+for I_app = I_app_test
+    
+    f = @(t, y) [(1/Cm) * (-(GNa*( y(2).^3 ) .* y(3) .* (y(1)-VNa) + GK*( y(4).^4 ).*( y(1)-VK ) + GL*( y(1)-VL ) ) + I_app); ...
+        alpha_m(y(1)).*(1-y(2)) - beta_m(y(1)).*y(2); ...
+        alpha_h(y(1)).*(1-y(3)) - beta_h(y(1)).*y(3); ...
+        alpha_n(y(1)).*(1-y(4)) - beta_n(y(1)).*y(4)];
+    
+    [t, ya] = ode15s(f, tspan, y0);
+    
+    V = ya(:, 1);
+    m = ya(:, 2);
+    h = ya(:, 3);
+    n = ya(:, 4);
+
+
+    figure;
+    plot(t, V, LineWidth=2)
+    grid on
+    title(sprintf('Potenziale con stimolo costante = %i', I_app), Interpreter="latex")
+    xlabel('tempo (ms)')
+
+
+end
