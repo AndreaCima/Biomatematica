@@ -255,8 +255,8 @@ for T_DI = T_DI_test
         [t, ya] = ode15s(f, tspan, y0);
         
         V = ya(:, 1);
-        V_tot = [V_tot; V(1:end-1)];
-        t_tot = [t_tot; t(1:end-1)];
+        V_tot = [V_tot; V];
+        t_tot = [t_tot; t];
 
     end
     
