@@ -10,13 +10,17 @@ delta = 1;
 gamma = 0.25;
 e = 0.1;
 
-v0 = @(x) 0;
-w0 = @(x) 0;
+v0 = @(x) zeros(length(x), 1);
+w0 = @(x) zeros(length(x), 1);
 
-m = 900;
-n = 100;
+m = 2^10;
+n = 2^10;
 
-T = 5; 
+T = 50; 
+
+Dt = T/m;
+h = 1/(n+1);
+
 t = linspace(0, T, m+1)';
 x = linspace(0, 1, n+2)';
 
@@ -26,12 +30,9 @@ V(:, 1) = v0(x);
 W = zeros(n+2, m+1);
 W(:, 1) = w0(x);
 
-Dt = T/m;
-h = 1/(n+1);
-
 A = -(1/h^2) * spdiags(repmat([1, -2, 1], n+2, 1), -1:1, n+2, n+2);
 A(1, 2) = -2/(h^2); A(n+2, n+1) = -2/(h^2); % valori di correzione per matrice A
-A = (1/Dt).*speye(n+2) - sigma*A; 
+A = (1/Dt).*speye(n+2) + sigma*A; 
 dA = decomposition(A); % per risolvere il sistema lineare in modo più efficiente
 
 I_app = @(t, x) 2*(0 <= x & x <= 0.04 & 0 <= t & t <= 1);
@@ -63,6 +64,12 @@ xlabel('tempo')
 ylabel('spazio')
 title('Recovery', Interpreter='latex')
 
+
+figure;
+mesh(t, x, W); axis xy
+xlabel('tempo')
+ylabel('spazio')
+title('Recovery', Interpreter='latex')
 
 
 
