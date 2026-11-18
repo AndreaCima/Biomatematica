@@ -50,27 +50,27 @@ figure;
 imagesc(t, x, V); axis xy
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Potenziale', Interpreter='latex')
+title('Singolo impulso: potenziale', Interpreter='latex')
 
 figure;
 mesh(t, x, V);
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Potenziale', Interpreter='latex')
+title('Singolo impulso: potenziale', Interpreter='latex')
 
 
 figure;
 imagesc(t, x, W); axis xy
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Recovery', Interpreter='latex')
+title('Singolo impulso: recovery', Interpreter='latex')
 
 
 figure;
 mesh(t, x, W); axis xy
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Recovery', Interpreter='latex')
+title('Singolo impulso: recovery', Interpreter='latex')
  
 
 figure; % plot evoluzione temporale nel punto medio
@@ -85,7 +85,7 @@ h2 = animatedline('LineWidth', 1.5, Color='red', DisplayName='recovery');
 grid on
 hold on
 xlabel('tempo (ms)')
-title(sprintf('Evoluzione temporale in x = %.1f', x(idx_mid)), Interpreter="latex")
+title(sprintf('Singolo impulso: evoluzione temporale in x = %.1f', x(idx_mid)), Interpreter="latex")
 axis([0, T, y_min y_max])
 legend(Location="best")
 
@@ -111,7 +111,7 @@ xlabel('Intervallo spaziale', Interpreter='latex')
 for j = 1:m+1
     set(plotV, 'YData', V(:, j))
     set(plotW, 'YData', W(:, j)) 
-    title(sprintf('t = %.2f ms', t(j)), Interpreter="latex");
+    title(sprintf('Singolo impulso: t = %.2f ms', t(j)), Interpreter="latex");
     drawnow
 end
 
@@ -168,33 +168,33 @@ figure;
 imagesc(t, x, V); axis xy
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Potenziale', Interpreter='latex')
+title('Doppio impulso: potenziale', Interpreter='latex')
 
 figure;
 mesh(t, x, V);
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Potenziale', Interpreter='latex')
+title('Doppio impulso: potenziale', Interpreter='latex')
 
 
 figure;
 imagesc(t, x, W); axis xy
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Recovery', Interpreter='latex')
+title('Doppio impulso: recovery', Interpreter='latex')
 
 
 figure;
 mesh(t, x, W); axis xy
 xlabel('tempo (ms)')
 ylabel('spazio')
-title('Recovery', Interpreter='latex')
+title('Doppio impulso: recovery', Interpreter='latex')
 
-figure; % plot evoluzione temporale nel punto x = 1/4
+figure; % plot evoluzione temporale nel punto x = 1/2
 
 y_min = min(min(V(:)), min(W(:))) - 0.05;
 y_max = max(max(V(:)), max(W(:))) + 0.05;
-idx_x = ceil((n+2)/4); % indice punto x
+idx_x = ceil((n+2)/2); % indice punto x
 
 h1 = animatedline('LineWidth', 1.5, Color='blue', DisplayName='potenziale');
 h2 = animatedline('LineWidth', 1.5, Color='red', DisplayName='recovery');
@@ -202,7 +202,7 @@ h2 = animatedline('LineWidth', 1.5, Color='red', DisplayName='recovery');
 grid on
 hold on
 xlabel('tempo (ms)')
-title(sprintf('Evoluzione temporale in x = %.2f', x(idx_x)), Interpreter="latex")
+title(sprintf('Doppio impulso: evoluzione temporale in x = %.2f', x(idx_x)), Interpreter="latex")
 axis([0, T, y_min y_max])
 legend(Location="best")
 
@@ -228,9 +228,74 @@ xlabel('Intervallo spaziale', Interpreter='latex')
 for j = 1:m+1
     set(plotV, 'YData', V(:, j))
     set(plotW, 'YData', W(:, j)) 
-    title(sprintf('t = %.2f ms', t(j)), Interpreter="latex");
+    title(sprintf('Doppio impulso: t = %.2f ms', t(j)), Interpreter="latex");
     drawnow
 end
+
+
+%% studio effetto sogia su impulso corrente applicata
+clear; clc
+
+sigma = 1e-3;
+b = 5;
+c = 1;
+beta = 0.1;
+delta = 1;
+gamma = 0.25;
+e = 0.1;
+
+v0 = @(x) zeros(length(x), 1);
+w0 = @(x) zeros(length(x), 1);
+
+m = 800; % tempo
+n = 1000; % spazio
+
+T = 50; 
+T_stim_test = 0.5:.5:1.5;
+
+treshold = delta/2;
+
+% passi temporali e spaziali
+Dt = T/m;
+h = 1/(n+1);
+
+t = linspace(0, T, m+1)';
+x = linspace(0, 1, n+2)';
+
+V = zeros(n+2, m+1); % potenziale
+V(:, 1) = v0(x);
+
+W = zeros(n+2, m+1); % recovery
+W(:, 1) = w0(x);
+
+A = -(1/h^2) * spdiags(repmat([1, -2, 1], n+2, 1), -1:1, n+2, n+2);
+A(1, 2) = -2/(h^2); A(n+2, n+1) = -2/(h^2); % valori di correzione per matrice A
+A = (1/Dt).*speye(n+2) + sigma*A; 
+dA = decomposition(A); % per risolvere il sistema lineare in modo più efficiente
+
+alpha_test = 0.1:.1:2;
+
+for idx_T = 1:length(T_stim_test)
+    for idx_alpha = 1:length(alpha_test)
+        alpha = alpha_test(idx_alpha);
+        T_stim = T_stim_test(idx_T);
+    
+        I_app = @(t, x) alpha*(0 <= x & x <= 0.04 & 0 <= t & t <= T_stim);
+    
+        for j=2:m+1
+            F = V(:, j-1)/Dt + b * V(:, j-1) .* ( V(:, j-1)-beta ) .* ( delta - V(:, j-1) ) - c*W(:, j-1) + I_app(t(j), x);
+    
+            V(:, j) = dA\F;
+            W(:, j) = (Dt / (1+Dt*e*gamma)) * (W(:, j-1)./Dt + e*V(:, j-1));
+        end
+        if max(V(:)) > treshold && idx_alpha <= length(alpha_test)
+            fprintf("Se lo stimolo ha una durata di %.2f ms, allora il potenziale d'azione parte per alpha = %.1f\n", T_stim, alpha)
+            break
+        end
+    end
+end
+
+
 
 
 
