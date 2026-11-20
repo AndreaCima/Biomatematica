@@ -24,7 +24,7 @@ n0 = @(x) 3.1768e-1*ones(length(x), 1);
 
 Iapp =@(t, x) 20 * (0 <= t & t <= 1 & 0 <= x & x <= 0.05);
 
-T = 20;
+T = 30;
 
 n_t = 1000; % tempo
 n_x = 1000; % spazio
