@@ -17,10 +17,10 @@ beta_m = @(V) 4*exp(-V/18);
 beta_h = @(V) (exp( (30-V)/10 ) + 1).^(-1);
 beta_n = @(V) 0.125*exp(-V/80);
 
-V0 = @(x) 6.6*zeros(length(x), 1);
-m0 = @(x) 5.2934e-2*zeros(length(x), 1);
-h0 = @(x) 5.9611e-1*zeros(length(x), 1);
-n0 = @(x) 3.1768e-1*zeros(length(x), 1);
+V0 = @(x) 6.6*ones(length(x), 1);
+m0 = @(x) 5.2934e-2*ones(length(x), 1);
+h0 = @(x) 5.9611e-1*ones(length(x), 1);
+n0 = @(x) 3.1768e-1*ones(length(x), 1);
 
 Iapp =@(t, x) 20 * (0 <= t & t <= 1 & 0 <= x & x <= 0.05);
 
@@ -79,7 +79,7 @@ min_IK = min(IK(:)) - 0.05; max_IK = max(IK(:)) + 0.05;
 min_Iion = min(Iion(:)) - 0.05; max_Iion = max(Iion(:)) + 0.05;
 
 min_I = min([min_INa, min_IK, min_Iion]);
-max_I = min([max_INa, max_IK, max_Iion]);
+max_I = max([max_INa, max_IK, max_Iion]);
 
 figure; 
 mesh(t, x, V)
@@ -102,7 +102,7 @@ title('Potenziale', Interpreter='latex')
 % end
 
 figure;
-tl = tiledlayout(1, 3);
+tl = tiledlayout(3, 1);
 nexttile 
 plotV = plot(x, V(:, 1), 'b', LineWidth=2, DisplayName='potenziale'); 
 grid on 
